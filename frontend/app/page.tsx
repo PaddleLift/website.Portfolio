@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import "./globals.css";
-import FeaturesSection from "@/components/NewHome/FeaturesSection";
 import WorldMapSection from "@/components/NewHome/maps";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
