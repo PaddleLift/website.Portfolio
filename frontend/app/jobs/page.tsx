@@ -55,13 +55,6 @@ const MaintenancePage: React.FC = () => {
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
           This Page is Under Maintenance
         </h2>
-
-        <div className="bg-blue-500/20 border-l-4 border-blue-500 p-4 sm:p-6 rounded-lg text-left max-w-2xl mx-auto px-4 sm:px-6">
-          <p className="text-base sm:text-xl">
-            <span className="font-semibold">Estimated Return:</span> We'll be
-            back online very soon! Thank you for your patience.
-          </p>
-        </div>
       </motion.div>
 
       {/* Footer - Responsive Positioning and Text */}
