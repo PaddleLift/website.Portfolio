@@ -12,6 +12,7 @@ import { Phone, Mail, MapPin, Upload } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ContactFooter from "@/components/ContactFooter";
 import axios from "axios";
+import { FaWhatsapp } from "react-icons/fa";
 
 interface FormData {
   firstName: string;
@@ -375,8 +376,12 @@ export default function ContactPage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center">
                     <Phone className="w-5 h-5 mr-2 text-neutral-400" />
+                    <p className="text-neutral-400">Call : +91-99710 23294</p>
+                  </div>
+                  <div className="flex items-center">
+                    <FaWhatsapp className="w-5 h-5 mr-2 text-neutral-400" />
                     <p className="text-neutral-400">
-                      Call or WhatsApp: +91-99710 23294
+                      WhatsApp : +91-99710 23294
                     </p>
                   </div>
                   <div className="flex items-center">

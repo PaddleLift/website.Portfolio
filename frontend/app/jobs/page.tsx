@@ -14,9 +14,9 @@ const MaintenancePage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        {/* Logo and Site Name - Responsive Flex */}
-        <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8 sm:mb-12">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 relative">
+        {/* Logo - Centered and Increased Size */}
+        <div className="flex items-center justify-center mb-8 sm:mb-12">
+          <div className="w-32 h-32 sm:w-40 sm:h-40 relative">
             <Image
               src="/Plogo.png"
               alt="PaddleLift Logo"
@@ -24,9 +24,6 @@ const MaintenancePage: React.FC = () => {
               className="object-contain"
             />
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-            PaddleLift
-          </h1>
         </div>
 
         {/* Maintenance Icon - Responsive Size */}
