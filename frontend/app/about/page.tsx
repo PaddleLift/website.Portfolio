@@ -3,7 +3,6 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ManagementCard } from "@/components/about/management-card";
-import { TeamGallery } from "@/components/about/team-gallery";
 import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Footer from "@/components/Footer";
@@ -12,6 +11,20 @@ import { useEffect, useState } from "react";
 import NewTimeline from "@/components/about/new-timeline";
 import SubHeading from "@/components/about/SubHeading";
 import Link from "next/link";
+import axios from "axios";
+import TeamGallery from "@/components/about/team-gallery";
+
+// Define the type for a team member
+interface TeamMember {
+  name: string;
+  title: string;
+  position: string;
+  photo: string;
+  description: string;
+  socials: {
+    linkedin: string;
+  };
+}
 
 const teamMembers = [
   {
@@ -63,6 +76,8 @@ const teamMembers = [
 export default function AboutPage() {
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [description, setDescription] = useState("");
+  // const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]); // Explicitly type the state
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -85,6 +100,28 @@ export default function AboutPage() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    // Fetch the about description
+    axios
+      .get("https://paddlelift.onrender.com/components/about/")
+      .then((res) => {
+        setDescription(res.data.description);
+      })
+      .catch(() => {
+        console.error("Failed to load the description");
+      });
+
+    // Fetch the management team data
+    // axios
+    //   .get("https://paddlelift.onrender.com/components/management/")
+    //   .then((res) => {
+    //     setTeamMembers(res.data.management_team);
+    //   })
+    //   .catch(() => {
+    //     console.error("Failed to load the management team data");
+    //   });
+  }, []);
 
   return (
     <>
@@ -114,14 +151,7 @@ export default function AboutPage() {
                   About <span className="text-red-600">PaddleLift</span>
                 </h1>
                 <p className="text-lg md:text-lg text-gray-300 mb-8 leading-relaxed">
-                  Founded in 2020, Paddlelift has rapidly become a beacon of
-                  excellence in the recruitment & HR industry. Born during the
-                  pandemic, we&apos;ve thrived by connecting businesses
-                  worldwide with top talent. Our innovative approach, global
-                  reach, and dedication to personalized service make us the
-                  preferred partner for companies aiming to grow and succeed.
-                  Join us as we elevate recruitment & HR practices to new
-                  heights, transforming challenges into opportunities.
+                  {description}
                 </p>
                 <Link href="/contact">
                   <Button

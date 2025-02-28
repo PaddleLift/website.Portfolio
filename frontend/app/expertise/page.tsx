@@ -1,5 +1,6 @@
 import ExpertisePage from "@/components/expertise/herosection";
 import MobileOrgainsation from "@/components/expertise/MobileOrgainsation";
+import NewSuccessApproach from "@/components/expertise/NewSuccessApproach";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import OrganizationalStructure from "@/components/NewHome/organisationstructure";
@@ -19,10 +20,13 @@ const Expertise: React.FC = () => {
         <div className="block md:hidden">
           <MobileOrgainsation />
         </div>
+        <NewSuccessApproach />
         <div className="pt-20">
           <Footer />
         </div>
         {/* 
+        <SuccessApproach />
+        <NewSuccess />
         <RecruitmentProcess />
       Scroll-Up Button */}
       </div>

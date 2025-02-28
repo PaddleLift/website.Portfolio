@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 const Navbar = () => {
@@ -16,6 +16,7 @@ const Navbar = () => {
     null,
   );
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -115,7 +116,9 @@ const Navbar = () => {
         {/* Navbar */}
         <nav
           className={`max-w-7xl transition-all duration-300 ${
-            isScrolled ? "w-[90%] bg-black border" : "w-[95%] bg-transparent"
+            isScrolled
+              ? "w-[90%] bg-[#09090B] border"
+              : "w-[95%] bg-transparent"
           } rounded-md ${
             isVisible
               ? "translate-y-0 opacity-100"
@@ -143,7 +146,11 @@ const Navbar = () => {
                     <Link
                       key={link.path}
                       href={link.path}
-                      className="flex items-center justify-center text-lg font-bold leading-[110%] px-4 py-2 rounded-md hover:bg-neutral-800 hover:text-white/80 text-white hover:shadow-[0px_1px_0px_0px_#FFFFFF20_inset] transition duration-200"
+                      className={`flex items-center justify-center text-lg font-bold leading-[110%] px-4 py-2 rounded-md hover:bg-neutral-800 hover:text-white/80 text-white hover:shadow-[0px_1px_0px_0px_#FFFFFF20_inset] transition duration-200 ${
+                        pathname === link.path
+                          ? "bg-neutral-800 text-white/80 shadow-[0px_1px_0px_0px_#FFFFFF20_inset]"
+                          : ""
+                      }`}
                     >
                       {link.name}
                     </Link>
@@ -213,7 +220,7 @@ const Navbar = () => {
             animate="visible"
             exit="hidden"
             variants={menuVariants}
-            className="fixed inset-0 bg-black z-50 flex flex-col justify-center items-center"
+            className="fixed inset-0 bg-[#09090B] z-50 flex flex-col justify-center items-center"
           >
             <button
               onClick={toggleMobileMenu}
@@ -228,7 +235,7 @@ const Navbar = () => {
                 className="h-8 w-8"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M278.6 256l68.2-68.2c6.2-6.2 6.2-16.4 0-22.6-6.2-6.2-16.4-6.2-22.6 0L256 233.4l-68.2-68.2c-6.2-6.2-16.4-6.2-22.6 0-6.2 6.2-6.2 16.4 0 22.6L233.4 256l-68.2 68.2c-6.2 6.2-6.2 16.4 0 22.6 6.2 6.2 16.4 6.2 22.6 0L256 278.6l68.2 68.2c6.2 6.2 16.4 6.2 22.6 0 6.2-6.2 6.2-16.4 0-22.6L278.6 256z" />
+                <path d="M278.6 256l68.2-68.2c6.2-6.2 6.2-16.4 0-22.6-6.2-6.2-16.4-6.2-22.6 0L256 233.4l-68.2-68.2c-6.2-6.2-16.4-6.2-22.6 0-6.2 6.2-6.2 16.4 0 22.6L233.4 256l-68.2 68.2c-6.2 6.2-16.4 6.2 22.6 0 6.2-6.2 6.2-16.4 0-22.6L278.6 256z" />
               </svg>
             </button>
 
@@ -248,12 +255,32 @@ const Navbar = () => {
                 >
                   <button
                     onClick={() => handleNavigation(link.path)}
-                    className="text-white text-4xl font-bold"
+                    className={`text-white text-4xl font-bold ${pathname === link.path ? "underline" : ""}`}
                   >
                     {link.name}
                   </button>
                 </motion.div>
               ))}
+              {/* Job Board Button for Mobile */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                  transition: {
+                    delay: navLinks.length * 0.2,
+                    duration: 0.5,
+                  },
+                }}
+              >
+                <Button
+                  size="lg"
+                  className="bg-white text-black hover:bg-blue-500 hover:text-white transition duration-200"
+                  onClick={() => handleNavigation("/jobs")}
+                >
+                  Job Board
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         )}
