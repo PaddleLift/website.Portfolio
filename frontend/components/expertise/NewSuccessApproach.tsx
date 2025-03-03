@@ -58,22 +58,19 @@ const MotionCard = motion(Card);
 export default function SuccessApproach() {
   return (
     <main className="bg-[#09090B] text-white overflow-x-hidden overflow-y-auto">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 py-16 space-y-8">
         {/* Header */}
         <motion.div
-          className="mb-6 sm:mb-8"
+          className="text-center space-y-4"
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{
-            once: true,
-            margin: window.innerWidth < 768 ? "0px" : "-100px",
-          }}
+          viewport={{ once: true }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-white max-w-4xl leading-[110%]">
+          <h2 className="text-3xl font-bold mb-4 text-white max-w-2xl leading-[1.1] text-left">
             Our Success <span className="text-teal-400">Approach</span>
           </h2>
-          <p className="text-white text-sm sm:text-base font-medium mt-1 max-w-lg">
+          <p className="text-white text-sm sm:text-base font-medium mt-1 max-w-lg text-left">
             A comprehensive five-step methodology for exceptional results
           </p>
         </motion.div>
@@ -90,7 +87,7 @@ export default function SuccessApproach() {
           />
 
           {/* Cards Container */}
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-4">
             {/* Steps */}
             {steps.map((step, index) => {
               const xInitial =
@@ -110,10 +107,7 @@ export default function SuccessApproach() {
                     delay: index * 0.4,
                     ease: "easeOut",
                   }}
-                  viewport={{
-                    once: true,
-                    margin: window.innerWidth < 768 ? "0px" : "-50px",
-                  }}
+                  viewport={{ once: true }}
                 >
                   <MotionCard
                     className={`
@@ -134,8 +128,8 @@ export default function SuccessApproach() {
                       transition={{ duration: 1.5, delay: 0.3 }}
                     />
 
-                    <div className="relative p-3 sm:p-4">
-                      <div className="flex flex-row items-center gap-3">
+                    <div className="relative p-6">
+                      <div className="flex flex-row items-center gap-4">
                         {/* Icon Container */}
                         <motion.div
                           className="flex-shrink-0"
@@ -149,7 +143,7 @@ export default function SuccessApproach() {
                           }}
                         >
                           {/* Removed backdrop-blur-sm from the icon container */}
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30 group-hover:scale-105 transition-transform duration-300 group-hover:border-white/50">
+                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30 group-hover:scale-105 transition-transform duration-300 group-hover:border-white/50">
                             {step.icon}
                           </div>
                         </motion.div>
@@ -166,11 +160,11 @@ export default function SuccessApproach() {
                             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-white/20 border border-white/30 group-hover:border-white/50 group-hover:bg-white/30 transition-all duration-300">
                               Step {step.id}
                             </span>
-                            <h2 className="text-base sm:text-lg font-bold tracking-tight text-white group-hover:scale-[1.02] transition-transform duration-300">
+                            <h2 className="text-lg font-bold tracking-tight text-white group-hover:scale-[1.02] transition-transform duration-300">
                               {step.title}
                             </h2>
                           </div>
-                          <p className="text-white/80 text-xs sm:text-sm font-medium tracking-wide max-w-2xl">
+                          <p className="text-white/80 text-sm font-medium tracking-wide max-w-2xl">
                             {step.description}
                           </p>
                         </motion.div>
