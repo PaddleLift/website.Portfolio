@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,120 @@ interface FormData {
   phone: string;
   message: string;
 }
+
+interface ContactInfoData {
+  call: string;
+  WhatsApp: string;
+  Email: string;
+  Address: string;
+}
+
+const ContactInfo = () => {
+  const [contactData, setContactData] = useState<ContactInfoData>({
+    call: "",
+    WhatsApp: "",
+    Email: "",
+    Address: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch(
+          "https://paddlelift.onrender.com/components/contact-information/",
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch contact information");
+        }
+        const data = await response.json();
+        setContactData(data.contact_information);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
+        <CardHeader>
+          <CardTitle className="text-neutral-200">
+            Contact Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-neutral-400">Loading...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
+        <CardHeader>
+          <CardTitle className="text-neutral-200">
+            Contact Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-neutral-400">Error: {error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
+      <CardHeader>
+        <CardTitle className="text-neutral-200">Contact Information</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center">
+          <Phone className="w-5 h-5 mr-2 text-neutral-400" />
+          <p className="text-neutral-400">Call: +91-{contactData.call}</p>
+        </div>
+        <div className="flex items-center">
+          <FaWhatsapp className="w-5 h-5 mr-2 text-neutral-400" />
+          <p className="text-neutral-400">
+            WhatsApp: +91-{contactData.WhatsApp}
+          </p>
+        </div>
+        <div className="flex items-center">
+          <Mail className="w-5 h-5 mr-2 text-neutral-400" />
+          <p className="text-neutral-400">Email Us: {contactData.Email}</p>
+        </div>
+        <div className="flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-neutral-400" />
+          <p className="text-neutral-400">{contactData.Address}</p>
+        </div>
+      </CardContent>
+      <CardHeader>
+        <CardTitle className="text-neutral-200">Our Location</CardTitle>
+      </CardHeader>
+      <CardContent className="h-[460px]">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.4725137946443!2d77.36948895194043!3d28.61559722233175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce59d969ba857%3A0x9a234478868502b9!2sPaddleLift%20Pvt.%20Ltd.!5e0!3m2!1sen!2sin!4v1734004896279!5m2!1sen!2sin"
+          width="100%"
+          height="100%"
+          style={{
+            border: 0,
+            borderRadius: "0.5rem",
+            filter: "invert(90%) hue-rotate(180deg)",
+          }}
+          allowFullScreen
+          loading="lazy"
+        />
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
@@ -233,7 +347,7 @@ export default function ContactPage() {
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 to-neutral-400 mb-4">
               Get in <span className="text-red-600">Touch</span>
             </h1>
-            <p className="text-neutral-400">We&apos;re here to help.</p>
+            <p className="text-neutral-400">We're here to help.</p>
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-8 mb-8">
@@ -367,57 +481,7 @@ export default function ContactPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
-                <CardHeader>
-                  <CardTitle className="text-neutral-200">
-                    Contact Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center">
-                    <Phone className="w-5 h-5 mr-2 text-neutral-400" />
-                    <p className="text-neutral-400">Call : +91-99710 23294</p>
-                  </div>
-                  <div className="flex items-center">
-                    <FaWhatsapp className="w-5 h-5 mr-2 text-neutral-400" />
-                    <p className="text-neutral-400">
-                      WhatsApp : +91-99710 23294
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <Mail className="w-5 h-5 mr-2 text-neutral-400" />
-                    <p className="text-neutral-400">
-                      Email Us: info@paddlelift.com
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2 text-neutral-400" />
-                    <p className="text-neutral-400">
-                      Visit Us: B-4, First Floor, Workspaces By Innova, B Block,
-                      Sector 63, Noida, Uttar Pradesh 201301
-                    </p>
-                  </div>
-                </CardContent>
-                <CardHeader>
-                  <CardTitle className="text-neutral-200">
-                    Our Location
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[460px]">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.4725137946443!2d77.36948895194043!3d28.61559722233175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce59d969ba857%3A0x9a234478868502b9!2sPaddleLift%20Pvt.%20Ltd.!5e0!3m2!1sen!2sin!4v1734004896279!5m2!1sen!2sin"
-                    width="100%"
-                    height="100%"
-                    style={{
-                      border: 0,
-                      borderRadius: "0.5rem",
-                      filter: "invert(90%) hue-rotate(180deg)",
-                    }}
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </CardContent>
-              </Card>
+              <ContactInfo />
             </motion.div>
           </div>
         </div>

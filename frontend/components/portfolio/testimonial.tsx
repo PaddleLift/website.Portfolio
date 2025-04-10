@@ -12,7 +12,7 @@ interface Testimonial {
   avatar: string;
 }
 
-const TESTIMONIALS_DATA: Testimonial[] = [
+const INITIAL_TESTIMONIALS_DATA: Testimonial[] = [
   {
     quote:
       "Partnering with Paddlelift for our hiring needs at Otipy/Crofarm was exceptional. Their industry knowledge and commitment ensured highly qualified candidates who fit our team perfectly. Their thorough vetting and proactive communication saved us time and addressed our concerns, helping us fill critical positions with outstanding individuals. We highly recommend Paddlelift for reliable hiring consulting.",
@@ -52,18 +52,64 @@ export default function Testimonials() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    INITIAL_TESTIMONIALS_DATA,
+  );
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % TESTIMONIALS_DATA.length);
+  // Fetch API data
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch(
+          "https://paddlelift.onrender.com/components/what-our-clients-say/",
+        );
+        const data = await response.json();
+
+        // Map API data to match Testimonial interface
+        const apiTestimonials: Testimonial[] = data.what_our_clients_say.map(
+          (item: any) => ({
+            quote: item.response,
+            name: item.name,
+            title: item.position,
+            avatar: item.image_url,
+          }),
+        );
+
+        // Combine initial data with API data and remove duplicates based on name and title
+        const combinedTestimonials = [
+          ...INITIAL_TESTIMONIALS_DATA,
+          ...apiTestimonials,
+        ];
+        const uniqueTestimonials = Array.from(
+          new Map(
+            combinedTestimonials.map((item) => [
+              `${item.name}-${item.title}`,
+              item,
+            ]),
+          ).values(),
+        );
+
+        setTestimonials(uniqueTestimonials);
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+        // Fallback to initial data if API fails
+        setTestimonials(INITIAL_TESTIMONIALS_DATA);
+      }
+    };
+
+    fetchTestimonials();
   }, []);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+  }, [testimonials.length]);
 
   const handlePrev = useCallback(() => {
     setCurrentIndex(
-      (prev) =>
-        (prev - 1 + TESTIMONIALS_DATA.length) % TESTIMONIALS_DATA.length,
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
-  }, []);
+  }, [testimonials.length]);
 
   // Intersection Observer setup
   useEffect(() => {
@@ -163,8 +209,8 @@ export default function Testimonials() {
                 <div className="md:w-1/3 flex-shrink-0">
                   <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 mx-auto">
                     <Image
-                      src={TESTIMONIALS_DATA[currentIndex].avatar}
-                      alt={TESTIMONIALS_DATA[currentIndex].name}
+                      src={testimonials[currentIndex].avatar}
+                      alt={testimonials[currentIndex].name}
                       fill
                       className="rounded-full object-cover"
                       sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 192px"
@@ -175,14 +221,14 @@ export default function Testimonials() {
 
                 <div className="md:w-2/3">
                   <p className="text-gray-700 text-base md:text-lg lg:text-xl italic mb-6">
-                    {TESTIMONIALS_DATA[currentIndex].quote}
+                    {testimonials[currentIndex].quote}
                   </p>
                   <div className="text-right">
                     <p className="text-lg md:text-xl font-bold text-gray-900">
-                      {TESTIMONIALS_DATA[currentIndex].name}
+                      {testimonials[currentIndex].name}
                     </p>
                     <p className="text-sm md:text-base text-gray-600 font-medium">
-                      {TESTIMONIALS_DATA[currentIndex].title}
+                      {testimonials[currentIndex].title}
                     </p>
                   </div>
                 </div>

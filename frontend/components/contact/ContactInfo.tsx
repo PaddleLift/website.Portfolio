@@ -1,7 +1,68 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin } from "lucide-react";
 
 export const ContactInfo = () => {
+  const [contactData, setContactData] = useState({
+    call: "",
+    WhatsApp: "",
+    Email: "",
+    Address: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch(
+          "https://paddlelift.onrender.com/components/contact-information/",
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch contact information");
+        }
+        const data = await response.json();
+        setContactData(data.contact_information);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []); // Empty dependency array means this runs once on mount
+
+  if (loading) {
+    return (
+      <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
+        <CardHeader>
+          <CardTitle className="text-neutral-200">
+            Contact Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-neutral-400">Loading...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
+        <CardHeader>
+          <CardTitle className="text-neutral-200">
+            Contact Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-neutral-400">Error: {error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-black/40 border-neutral-800 backdrop-blur-sm h-full">
       <CardHeader>
@@ -10,18 +71,17 @@ export const ContactInfo = () => {
       <CardContent className="space-y-4">
         <div className="flex items-center">
           <Phone className="w-5 h-5 mr-2 text-neutral-400" />
-          <p className="text-neutral-400">Call or WhatsApp: +91-99710 23294</p>
+          <p className="text-neutral-400">
+            Call or WhatsApp: +91-{contactData.call}
+          </p>
         </div>
         <div className="flex items-center">
           <Mail className="w-5 h-5 mr-2 text-neutral-400" />
-          <p className="text-neutral-400">Email Us: info@paddlelift.com</p>
+          <p className="text-neutral-400">Email Us: {contactData.Email}</p>
         </div>
         <div className="flex items-center">
           <MapPin className="w-5 h-5 mr-2 text-neutral-400" />
-          <p className="text-neutral-400">
-            Visit Us: B-4, First Floor, Workspaces By Innova, B Block, Sector
-            63, Noida, Uttar Pradesh 201301
-          </p>
+          <p className="text-neutral-400">{contactData.Address}</p>
         </div>
       </CardContent>
       <CardHeader>
