@@ -52,9 +52,7 @@ export default function Testimonials() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(
-    INITIAL_TESTIMONIALS_DATA,
-  );
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Fetch API data
@@ -76,25 +74,10 @@ export default function Testimonials() {
           }),
         );
 
-        // Combine initial data with API data and remove duplicates based on name and title
-        const combinedTestimonials = [
-          ...INITIAL_TESTIMONIALS_DATA,
-          ...apiTestimonials,
-        ];
-        const uniqueTestimonials = Array.from(
-          new Map(
-            combinedTestimonials.map((item) => [
-              `${item.name}-${item.title}`,
-              item,
-            ]),
-          ).values(),
-        );
-
-        setTestimonials(uniqueTestimonials);
+        setTestimonials(apiTestimonials);
       } catch (error) {
         console.error("Error fetching testimonials:", error);
-        // Fallback to initial data if API fails
-        setTestimonials(INITIAL_TESTIMONIALS_DATA);
+        // Optionally handle error state here (e.g., show error message)
       }
     };
 
@@ -137,11 +120,11 @@ export default function Testimonials() {
 
   // Auto-slide functionality
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || testimonials.length === 0) return;
 
     const interval = setInterval(handleNext, SLIDE_INTERVAL);
     return () => clearInterval(interval);
-  }, [isPaused, handleNext]);
+  }, [isPaused, handleNext, testimonials.length]);
 
   const NavButton = ({
     onClick,
@@ -186,60 +169,64 @@ export default function Testimonials() {
           Global Reach, Local Expertise
         </motion.p>
 
-        <div
-          className="relative mt-8 md:mt-16 px-4 md:px-12"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <NavButton onClick={handlePrev} direction="left">
-            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-          </NavButton>
+        {testimonials.length > 0 ? (
+          <div
+            className="relative mt-8 md:mt-16 px-4 md:px-12"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <NavButton onClick={handlePrev} direction="left">
+              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+            </NavButton>
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={currentIndex}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl shadow-2xl overflow-hidden"
-            >
-              <div className="flex flex-col md:flex-row items-center p-6 md:p-8 gap-6 md:gap-8">
-                <div className="md:w-1/3 flex-shrink-0">
-                  <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 mx-auto">
-                    <Image
-                      src={testimonials[currentIndex].avatar}
-                      alt={testimonials[currentIndex].name}
-                      fill
-                      className="rounded-full object-cover"
-                      sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 192px"
-                      priority
-                    />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={currentIndex}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="bg-white rounded-xl shadow-2xl overflow-hidden"
+              >
+                <div className="flex flex-col md:flex-row items-center p-6 md:p-8 gap-6 md:gap-8">
+                  <div className="md:w-1/3 flex-shrink-0">
+                    <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 mx-auto">
+                      <Image
+                        src={testimonials[currentIndex].avatar}
+                        alt={testimonials[currentIndex].name}
+                        fill
+                        className="rounded-full object-cover"
+                        sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 192px"
+                        priority
+                      />
+                    </div>
+                  </div>
+
+                  <div className="md:w-2/3">
+                    <p className="text-gray-700 text-base md:text-lg lg:text-xl italic mb-6">
+                      {testimonials[currentIndex].quote}
+                    </p>
+                    <div className="text-right">
+                      <p className="text-lg md:text-xl font-bold text-gray-900">
+                        {testimonials[currentIndex].name}
+                      </p>
+                      <p className="text-sm md:text-base text-gray-600 font-medium">
+                        {testimonials[currentIndex].title}
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </motion.div>
+            </AnimatePresence>
 
-                <div className="md:w-2/3">
-                  <p className="text-gray-700 text-base md:text-lg lg:text-xl italic mb-6">
-                    {testimonials[currentIndex].quote}
-                  </p>
-                  <div className="text-right">
-                    <p className="text-lg md:text-xl font-bold text-gray-900">
-                      {testimonials[currentIndex].name}
-                    </p>
-                    <p className="text-sm md:text-base text-gray-600 font-medium">
-                      {testimonials[currentIndex].title}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          <NavButton onClick={handleNext} direction="right">
-            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-          </NavButton>
-        </div>
+            <NavButton onClick={handleNext} direction="right">
+              <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+            </NavButton>
+          </div>
+        ) : (
+          <p className="text-white text-center mt-8">Loading testimonials...</p>
+        )}
       </div>
     </div>
   );
