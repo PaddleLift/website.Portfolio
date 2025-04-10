@@ -51,8 +51,12 @@ const ContactInfo = () => {
         const data = await response.json();
         setContactData(data.contact_information);
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError(String(error));
+        }
         setLoading(false);
       }
     };
