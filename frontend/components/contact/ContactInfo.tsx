@@ -24,8 +24,8 @@ export const ContactInfo = () => {
         const data = await response.json();
         setContactData(data.contact_information);
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (error: any) {
+        setError(error.message);
         setLoading(false);
       }
     };
