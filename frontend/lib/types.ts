@@ -16,6 +16,7 @@ export interface JobListing {
   Client_Industry: string;
   Job_Description: string;
   Questions: string;
+  email: string | string[];
 }
 
 export interface JobsResponse {

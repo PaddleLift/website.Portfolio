@@ -159,11 +159,36 @@ export function JobApplication({ job }: { job: JobListing }) {
   </div>
 </div>`;
 
-      // Prepare email data
+      // // Prepare email data
+      // const recipientList = JSON.parse(
+      //   process.env.NEXT_PUBLIC_RECIPIENT_LIST || "[]",
+      // );
+      // recipientList.push(userEmail); // Add the user's email to the recipient list
       const recipientList = JSON.parse(
         process.env.NEXT_PUBLIC_RECIPIENT_LIST || "[]",
       );
-      recipientList.push(userEmail); // Add the user's email to the recipient list
+
+      recipientList.push(userEmail);
+
+      if (job.email) {
+        let jobEmails: string[] = [];
+
+        if (typeof job.email === "string") {
+          jobEmails = job.email
+            .split(",")
+            .map((email) => email.trim())
+            .filter((email) => email);
+        } else if (Array.isArray(job.email)) {
+          jobEmails = job.email.filter((email) => email && email.trim());
+        }
+
+        jobEmails.forEach((email) => {
+          if (email && !recipientList.includes(email)) {
+            recipientList.push(email);
+          }
+        });
+      }
+      console.log(recipientList);
 
       const emailData = {
         id: process.env.NEXT_PUBLIC_EMAIL_ID,
