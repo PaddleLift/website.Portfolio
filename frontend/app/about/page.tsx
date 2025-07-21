@@ -14,18 +14,6 @@ import Link from "next/link";
 import axios from "axios";
 import TeamGallery from "@/components/about/team-gallery";
 
-// Define the type for a team member
-interface TeamMember {
-  name: string;
-  title: string;
-  position: string;
-  photo: string;
-  description: string;
-  socials: {
-    linkedin: string;
-  };
-}
-
 const teamMembers = [
   {
     name: "Utkarsh Rastogi",
@@ -60,17 +48,17 @@ const teamMembers = [
       linkedin: "https://www.linkedin.com/in/rodutt/",
     },
   },
-  {
-    name: "Sanjay Amar",
-    title: "Co-Founder & Director",
-    position: "Head of Global Partnerships",
-    photo: "/founder-images/Sanjay.png",
-    description:
-      "Sanjay Amar, with 37+ years of experience and 26 years in Dubai, has held leadership roles including CEO, CFO, and Board Advisor, driving diversified conglomerates across the Middle East, Africa, and Asia. A Chartered Accountant with an Honorary Doctorate in Organizational Leadership, he is a Fellow of the Institute of Directors and a member of WHRPC.",
-    socials: {
-      linkedin: "https://www.linkedin.com/in/sanjayamar/",
-    },
-  },
+  // {
+  //   name: "Sanjay Amar",
+  //   title: "Co-Founder & Director",
+  //   position: "Head of Global Partnerships",
+  //   photo: "/founder-images/Sanjay.png",
+  //   description:
+  //     "Sanjay Amar, with 37+ years of experience and 26 years in Dubai, has held leadership roles including CEO, CFO, and Board Advisor, driving diversified conglomerates across the Middle East, Africa, and Asia. A Chartered Accountant with an Honorary Doctorate in Organizational Leadership, he is a Fellow of the Institute of Directors and a member of WHRPC.",
+  //   socials: {
+  //     linkedin: "https://www.linkedin.com/in/sanjayamar/",
+  //   },
+  // },
 ];
 
 export default function AboutPage() {
@@ -219,9 +207,15 @@ export default function AboutPage() {
                 Meet the <span className="text-emerald-400">Management</span>
               </motion.h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <div className="flex flex-wrap justify-center gap-6">
               {teamMembers.map((member) => (
-                <ManagementCard key={member.name} {...member} />
+                <div
+                  key={member.name}
+                  className="w-full sm:w-1/2 lg:w-1/4 max-w-[300px]"
+                >
+                  <ManagementCard {...member} />
+                </div>
               ))}
             </div>
           </div>
