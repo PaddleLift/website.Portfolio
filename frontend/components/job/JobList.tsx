@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { JobListing } from "@/lib/types";
@@ -26,6 +25,16 @@ const initialFilters: Filters = {
   industry: "",
 };
 
+// Utility function to generate slug from title
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/\(/g, "")
+    .replace(/\)/g, "");
+}
+
 export default function JobList({
   initialJobs,
 }: {
@@ -33,8 +42,8 @@ export default function JobList({
 }) {
   const [jobs, setJobs] = useState<JobListing[]>(initialJobs);
   const [filteredJobs, setFilteredJobs] = useState<
-    { job: JobListing; originalIndex: number }[]
-  >(initialJobs.map((job, index) => ({ job, originalIndex: index })));
+    { job: JobListing; slug: string }[]
+  >(initialJobs.map((job) => ({ job, slug: generateSlug(job.Title) })));
   const [selectedSalaryRange, setSelectedSalaryRange] = useState("all ranges");
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [uniqueIndustries, setUniqueIndustries] = useState<string[]>([]);
@@ -43,7 +52,7 @@ export default function JobList({
 
   useEffect(() => {
     const filtered = jobs
-      .map((job, index) => ({ job, originalIndex: index })) // Store original indices
+      .map((job) => ({ job, slug: generateSlug(job.Title) }))
       .filter(({ job }) => {
         const matchesSalary =
           selectedSalaryRange === "all ranges" ||
@@ -92,9 +101,7 @@ export default function JobList({
           const { min: filterMin, max: filterMax } = filters.yearsOfExperience;
 
           const rule1 = filterMin === 0 || filterMin <= jobMax;
-
           const rule2 = filterMin === 0 || filterMin >= jobMin;
-
           const rule4 = filterMax !== 0 && filterMax >= jobMin;
 
           return (rule1 && rule2) || rule4;
@@ -146,7 +153,6 @@ export default function JobList({
       <div className="sticky top-0 z-10 bg-[#09090B] backdrop-blur-sm">
         <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6">
           <div className="flex flex-col items-start justify-between gap-4 border-b border-gray-800 pb-4 sm:flex-row">
-            {/* Title and Filter Button */}
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <h2 className="text-xl font-semibold text-white">Recent Jobs</h2>
               <FilterDialog
@@ -157,7 +163,6 @@ export default function JobList({
                 jobLocations={uniqueJobLocations}
               />
             </div>
-            {/* Salary Range and Job Count */}
             <div className="flex flex-col items-end gap-4 w-full sm:w-auto sm:flex-row">
               <span className="text-sm text-gray-400">
                 {filteredJobs.length} jobs found
@@ -169,8 +174,12 @@ export default function JobList({
       {/* Job Listings */}
       <div className="mx-auto max-w-6xl space-y-4 p-6">
         {filteredJobs.length > 0 ? (
-          filteredJobs.map(({ job, originalIndex }) => (
-            <Link key={originalIndex} href={`/jobs/${originalIndex}`}>
+          filteredJobs.map(({ job, slug }) => (
+            <Link
+              key={slug}
+              href={`/jobs/${slug}`}
+              aria-label={`View details for ${job.Title}`}
+            >
               <Card className="bg-white transition-all hover:scale-[1.01] mb-4">
                 <div className="p-6">
                   <div className="flex flex-col md:flex-row items-start justify-between gap-4">
@@ -186,33 +195,33 @@ export default function JobList({
                       </div>
                     </div>
                   </div>
-
                   <div className="mb-4 flex flex-wrap gap-2">
                     {job.Required_skills.map((skill) => (
                       <Badge
                         key={skill}
                         variant="outline"
                         className="border-blue-200 text-blue-800"
+                        aria-label={`Skill: ${skill}`}
                       >
                         {skill}
                       </Badge>
                     ))}
                   </div>
-
                   <Badge
                     variant="secondary"
                     className="mb-2 bg-blue-100 text-blue-800"
+                    aria-label={`Salary range: ${job.Currency}${job.Salary_Range[0]} to ${job.Currency}${job.Salary_Range[1]}`}
                   >
                     {job.Currency}
                     {job.Salary_Range[0]} - {job.Currency}
                     {job.Salary_Range[1]}
                   </Badge>
-
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <Badge
                         variant="secondary"
                         className="h-2 w-2 rounded-full bg-blue-500 p-0"
+                        aria-hidden="true"
                       />
                       {job.Job_Location}
                     </div>
@@ -220,6 +229,7 @@ export default function JobList({
                       <Badge
                         variant="secondary"
                         className="h-2 w-2 rounded-full bg-blue-500 p-0"
+                        aria-hidden="true"
                       />
                       {job.Work_Mode}
                     </div>
@@ -227,6 +237,7 @@ export default function JobList({
                       <Badge
                         variant="secondary"
                         className="h-2 w-2 rounded-full bg-blue-500 p-0"
+                        aria-hidden="true"
                       />
                       {job.Experience_level}
                     </div>

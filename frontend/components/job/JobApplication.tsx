@@ -72,92 +72,84 @@ export function JobApplication({ job }: { job: JobListing }) {
         "What is Your Email?",
         ...(job.Questions || []),
       ];
+
       const emailTemplate = `
-<div style="max-width: 100%; background: #0a0f1f; font-family: 'Inter', sans-serif; color: #ffffff;">
+<!-- Root Wrapper -->
+<div style="max-width: 680px; margin: 0 auto; background: #fff; border-radius: 14px; font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif; color: #222; box-shadow: 0 4px 32px 0 rgba(44,62,80,.07); overflow: hidden;">
+  
   <!-- Header -->
-  <div style="background: linear-gradient(135deg, #1a1f38 0%, #0d1225 100%); padding: 40px 20px; text-align: center; border-bottom: 2px solid #242942;">
-    <h1 style="margin: 0; font-size: 2.5em; background: linear-gradient(45deg, #00d2ff 0%, #3a7bd5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-      New Application: ${job.Title}
-    </h1>
-    <p style="color: #8c94b0; margin-top: 15px; font-size: 1.1em;">
-      Received on ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+  <div style="background: #0c2f56; padding: 32px 36px 20px 36px;">
+    <h1 style="margin: 0; font-size: 2.1em; color: #fff; font-weight: 700; letter-spacing: -0.4px;">New Application for <span style="color: #47b6ff;">${job.Title}</span></h1>
+    <p style="margin: 8px 0 0; color: #e9eef3; font-size: 1.08em;">${job.Employment_type} • ${job.Experience_level}</p>
+    <p style="margin: 0; margin-top: 7px; color: #c9d5ee; font-size: 0.98em;">${job.Job_Location} • ${job.Work_Mode}</p>
+    <p style="margin: 0; color: #54d2d2; font-size: 0.98em; margin-top: 10px;">
+      <b style="opacity: .79">Received:</b> ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
     </p>
   </div>
 
-  <!-- Main Content -->
-  <div style="padding: 30px 20px;">
-    <!-- Candidate Responses -->
-    <div style="margin-bottom: 40px; background: #13182b; border-radius: 12px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-      <h2 style="font-size: 1.8em; margin: 0 0 25px 0; padding-bottom: 15px; border-bottom: 2px solid #242942; background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-        Candidate Responses
-      </h2>
-      
-      ${questions
-        .map(
-          (question, index) => `
-        <div style="margin-bottom: 30px; padding: 20px; background: #1a1f38; border-radius: 8px; border: 1px solid #242942; position: relative;">
-          <div style="position: absolute; top: -10px; left: 20px; background: #3a7bd5; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9em;">
-            Question ${index + 1}
-          </div>
-          <h3 style="color: #ffffff; font-size: 1.2em; margin: 15px 0 10px 0;">
-            ${question}
-          </h3>
-          <div style="background: #0d1225; padding: 15px; border-radius: 6px; border-left: 4px solid #3a7bd5;">
-            <p style="margin: 0; color: #8c94b0; line-height: 1.6;">
-              ${answers[index]?.replace(/\n/g, "<br>") || "No answer provided"}
-            </p>
-          </div>
-        </div>
-      `,
-        )
-        .join("")}
+  <!-- Body/Summary -->
+  <div style="padding: 36px; background: #f7fafd;">
+    <div style="margin-bottom: 14px;">
+      <p style="font-size: 1.11em; margin: 0 0 4px 0; color: #0c2f56;">👤 <b>Candidate</b>&nbsp; responses</p>
     </div>
-
-    <!-- Application Details -->
-    <div style="background: #13182b; border-radius: 12px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-      <h2 style="font-size: 1.8em; margin: 0 0 25px 0; padding-bottom: 15px; border-bottom: 2px solid #242942; background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-        Application Details
-      </h2>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-        <!-- Detail Cards -->
-        ${Object.entries({
-          Position: job.Title,
-          "Experience Level": job.Experience_level,
-          "Employment Type": job.Employment_type,
-          "Work Mode": job.Work_Mode,
-          Location: job.Job_Location,
-        })
+    <table style="background: #fff; border-radius: 10px; width: 100%; border-collapse: separate; border-spacing: 0 14px;">
+      <tbody>
+        ${questions
           .map(
-            ([label, value]) => `
-          <div style="background: #1a1f38; padding: 20px; border-radius: 8px; border: 1px solid #242942;">
-            <div style="color: #8c94b0; margin-bottom: 8px;">${label}</div>
-            <div style="color: #ffffff; font-size: 1.1em;">${value}</div>
-          </div>
-        `,
+            (q, i) => `
+            <tr style="box-shadow: 0 1.5px 12px 0 rgba(30,95,165,0.04);">
+              <td style="padding: 14px 22px 10px 0; min-width: 120px; font-weight: 500; color: #222; font-size: 1.06em;">${q}</td>
+              <td style="padding: 14px 0 10px 0; color: #414b65; font-size: 1.06em; line-height: 1.45; border-bottom: 1px solid #f1f5fa;">
+                ${answers[i]?.replace(/\n/g, "<br>") || '<span style="opacity:.64;">No answer provided</span>'}
+              </td>
+            </tr>
+          `,
           )
           .join("")}
-
-        <!-- CV Attachment Card -->
-        <div style="background: #1a1f38; padding: 20px; border-radius: 8px; border: 1px solid #242942;">
-          <div style="color: #8c94b0; margin-bottom: 8px;">CV Attachment</div>
-          <div style="color: #ffffff; font-size: 1.1em; word-break: break-all;">
-            <span style="display: inline-block; padding: 6px 12px; background: linear-gradient(45deg, #3a7bd5 0%, #00d2ff 100%); border-radius: 4px;">
-              ${file.name} (${(file.size / 1024).toFixed(2)} KB)
-            </span>
-          </div>
-        </div>
-      </div>
+      </tbody>
+    </table>
+    
+    <div style="margin: 40px 0 22px 0;">
+      <p style="font-size: 1.08em; color: #0c2f56; margin-bottom: 8px;"><b>Job Details</b></p>
+      <table style="background: #f6fafd; border-radius: 10px; width: 100%; border-collapse: collapse;">
+        <tbody style="font-size:1.05em;">
+          ${Object.entries({
+            Position: job.Title,
+            "Experience Level": job.Experience_level,
+            "Employment Type": job.Employment_type,
+            "Work Mode": job.Work_Mode,
+            Location: job.Job_Location,
+          })
+            .map(
+              ([label, value]) => `
+              <tr>
+                <td style="padding: 10px 18px 5px 0; color: #7d889e; min-width:170px;">${label}</td>
+                <td style="padding: 10px 0 5px 0; color: #24324b; font-weight: 500;">${value}</td>
+              </tr>
+            `,
+            )
+            .join("")}
+          <!-- CV -->
+          <tr>
+            <td style="padding: 10px 18px 10px 0; color: #7d889e; min-width:170px;">CV Attachment</td>
+            <td style="padding: 10px 0 10px 0; color: #3267a8;">
+              <span style="display: inline-block; background: #e9f5fe; color: #2476e4; border-radius: 7px; padding: 7px 13px; font-family:monospace; font-size: 0.97em;">
+                ${file.name} <span style="opacity:.7; font-size:0.92em;">(${(file.size / 1024).toFixed(2)} KB)</span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
+  
   <!-- Footer -->
-  <div style="background: #0d1225; padding: 20px; text-align: center; border-top: 2px solid #242942;">
-    <p style="margin: 0; color: #8c94b0; font-size: 0.9em;">
-      Developed by <a href="https://www.getsetdeployed.com/" target="_blank" style="color: #3a7bd5; text-decoration: none; font-weight: 500;">GetSetDeployed</a>
-    </p>
+  <div style="background:#f6fafd; padding: 18px 30px; text-align: center; font-size:1em; border-top:1px solid #e6eaf3;">
+    <span style="color: #91a0ba;">Sent via <a href="https://getsetdeployed.com/" target="_blank" style="color:#258cff; text-decoration:none; font-weight:500;">GetSetDeployed</a>
+    </span>
   </div>
-</div>`;
+</div>
+`;
 
       // // Prepare email data
       // const recipientList = JSON.parse(
@@ -212,7 +204,7 @@ export function JobApplication({ job }: { job: JobListing }) {
 
       // Send email
       await axios.post(
-        "https://email-client-paddlelift.onrender.com/send/",
+        "https://email-client-backend.onrender.com/send/",
         emailData,
       );
 
