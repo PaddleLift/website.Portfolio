@@ -66,7 +66,96 @@ export function JobApplication({ job }: { job: JobListing }) {
       // Extract the email from the answers array
       const userEmail = answers[1]; // Assuming the email is the second answer
 
-      // Build recipient list
+      // Create email template
+      const questions = [
+        "What is your Name?",
+        "What is Your Email?",
+        ...(job.Questions || []),
+      ];
+
+      const emailTemplate = `
+<!-- Root Wrapper -->
+<div style="max-width: 680px; margin: 0 auto; background: #fff; border-radius: 14px; font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif; color: #222; box-shadow: 0 4px 32px 0 rgba(44,62,80,.07); overflow: hidden;">
+  
+  <!-- Header -->
+  <div style="background: #0c2f56; padding: 32px 36px 20px 36px;">
+    <h1 style="margin: 0; font-size: 2.1em; color: #fff; font-weight: 700; letter-spacing: -0.4px;">New Application for <span style="color: #47b6ff;">${job.Title}</span></h1>
+    <p style="margin: 8px 0 0; color: #e9eef3; font-size: 1.08em;">${job.Employment_type} • ${job.Experience_level}</p>
+    <p style="margin: 0; margin-top: 7px; color: #c9d5ee; font-size: 0.98em;">${job.Job_Location} • ${job.Work_Mode}</p>
+    <p style="margin: 0; color: #54d2d2; font-size: 0.98em; margin-top: 10px;">
+      <b style="opacity: .79">Received:</b> ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+    </p>
+  </div>
+
+  <!-- Body/Summary -->
+  <div style="padding: 36px; background: #f7fafd;">
+    <div style="margin-bottom: 14px;">
+      <p style="font-size: 1.11em; margin: 0 0 4px 0; color: #0c2f56;">👤 <b>Candidate</b>&nbsp; responses</p>
+    </div>
+    <table style="background: #fff; border-radius: 10px; width: 100%; border-collapse: separate; border-spacing: 0 14px;">
+      <tbody>
+        ${questions
+          .map(
+            (q, i) => `
+            <tr style="box-shadow: 0 1.5px 12px 0 rgba(30,95,165,0.04);">
+              <td style="padding: 14px 22px 10px 0; min-width: 120px; font-weight: 500; color: #222; font-size: 1.06em;">${q}</td>
+              <td style="padding: 14px 0 10px 0; color: #414b65; font-size: 1.06em; line-height: 1.45; border-bottom: 1px solid #f1f5fa;">
+                ${answers[i]?.replace(/\n/g, "<br>") || '<span style="opacity:.64;">No answer provided</span>'}
+              </td>
+            </tr>
+          `,
+          )
+          .join("")}
+      </tbody>
+    </table>
+    
+    <div style="margin: 40px 0 22px 0;">
+      <p style="font-size: 1.08em; color: #0c2f56; margin-bottom: 8px;"><b>Job Details</b></p>
+      <table style="background: #f6fafd; border-radius: 10px; width: 100%; border-collapse: collapse;">
+        <tbody style="font-size:1.05em;">
+          ${Object.entries({
+            Position: job.Title,
+            "Experience Level": job.Experience_level,
+            "Employment Type": job.Employment_type,
+            "Work Mode": job.Work_Mode,
+            Location: job.Job_Location,
+          })
+            .map(
+              ([label, value]) => `
+              <tr>
+                <td style="padding: 10px 18px 5px 0; color: #7d889e; min-width:170px;">${label}</td>
+                <td style="padding: 10px 0 5px 0; color: #24324b; font-weight: 500;">${value}</td>
+              </tr>
+            `,
+            )
+            .join("")}
+          <!-- CV -->
+          <tr>
+            <td style="padding: 10px 18px 10px 0; color: #7d889e; min-width:170px;">CV Attachment</td>
+            <td style="padding: 10px 0 10px 0; color: #3267a8;">
+              <span style="display: inline-block; background: #e9f5fe; color: #2476e4; border-radius: 7px; padding: 7px 13px; font-family:monospace; font-size: 0.97em;">
+                ${file.name} <span style="opacity:.7; font-size:0.92em;">(${(file.size / 1024).toFixed(2)} KB)</span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <div style="background:#f6fafd; padding: 18px 30px; text-align: center; font-size:1em; border-top:1px solid #e6eaf3;">
+    <span style="color: #91a0ba;">Sent via <a href="https://getsetdeployed.com/" target="_blank" style="color:#258cff; text-decoration:none; font-weight:500;">GetSetDeployed</a>
+    </span>
+  </div>
+</div>
+`;
+
+      // // Prepare email data
+      // const recipientList = JSON.parse(
+      //   process.env.NEXT_PUBLIC_RECIPIENT_LIST || "[]",
+      // );
+      // recipientList.push(userEmail); // Add the user's email to the recipient list
       const recipientList = JSON.parse(
         process.env.NEXT_PUBLIC_RECIPIENT_LIST || "[]",
       );
@@ -91,64 +180,55 @@ export function JobApplication({ job }: { job: JobListing }) {
           }
         });
       }
+      console.log(recipientList);
 
-      console.log("Recipient list:", recipientList);
-
-      // Prepare data for the new API
       const emailData = {
-        job: {
-          Title: job.Title,
-          Employment_type: job.Employment_type,
-          Experience_level: job.Experience_level,
-          Job_Location: job.Job_Location,
-          Work_Mode: job.Work_Mode,
-          Questions: job.Questions || [],
-          email: job.email,
-        },
-        answers: answers,
-        file: {
-          filename: file.name,
-          content: base64CV.split(",")[1], // Remove data:mime;base64, prefix
-          content_type: file.type,
-          size: file.size,
-        },
-        recipientList: recipientList,
+        id: process.env.NEXT_PUBLIC_EMAIL_ID,
+        subject: `New Application for ${job.Title} - ${job.Employment_type}`,
+        body: emailTemplate,
+        recipient_list: recipientList,
+        smtp_host: "smtp.gmail.com",
+        smtp_port: 465,
+        use_tls: false,
+        use_ssl: true,
+        email_host_user: process.env.NEXT_PUBLIC_EMAIL_HOST_USER,
+        email_host_password: process.env.NEXT_PUBLIC_EMAIL_HOST_PASSWORD,
+        attachments: [
+          {
+            filename: file.name,
+            content: base64CV.split(",")[1],
+            content_type: file.type,
+          },
+        ],
       };
 
-      // Send to new API route
-      const response = await axios.post("/api/emailSent", emailData);
+      // Send email
+      await axios.post(
+        "https://email-client-backend.onrender.com/send/",
+        emailData,
+      );
 
-      if (response.data.message) {
-        // Show success toast
-        toast.success("Application submitted successfully!", {
-          duration: 5000,
-          position: "bottom-center",
-          style: {
-            background: "#4BB543",
-            color: "#fff",
-          },
-        });
+      // Show success toast
+      toast.success("Application submitted successfully!", {
+        duration: 5000,
+        position: "bottom-center",
+        style: {
+          background: "#4BB543",
+          color: "#fff",
+        },
+      });
 
-        // Reset form
-        setAnswers([]);
-        setFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-
-        setTimeout(() => {
-          router.push("/jobs");
-        }, 800);
-      }
+      // Reset form
+      setAnswers([]);
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setTimeout(() => {
+        router.push("/jobs");
+      }, 800);
     } catch (error) {
       console.error("Submission error:", error);
-
-      let errorMessage = "Failed to submit application";
-
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.error || error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to submit application";
       setError(errorMessage);
       toast.error(errorMessage, {
         duration: 4000,
@@ -222,19 +302,10 @@ export function JobApplication({ job }: { job: JobListing }) {
               required
               onChange={handleFileChange}
             />
-            {file && (
-              <p className="text-sm text-green-600">
-                Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
-              </p>
-            )}
           </div>
         </motion.div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-700 text-sm">{error}</p>
-          </div>
-        )}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <div className="flex justify-end">
           <Button

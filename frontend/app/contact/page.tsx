@@ -301,7 +301,8 @@ export default function ContactPage() {
       };
 
       const response = await axios.post(
-        "https://email-client-paddlelift.onrender.com/send/",
+        // "https://email-client-paddlelift.onrender.com/send/",
+        "https://email-client-paddlelift.onrender.com",
         emailData,
       );
       console.log("API response:", response.data);
